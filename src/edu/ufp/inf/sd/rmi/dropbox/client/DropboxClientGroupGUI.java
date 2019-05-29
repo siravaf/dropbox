@@ -6,6 +6,7 @@
 package edu.ufp.inf.sd.rmi.dropbox.client;
 
 import edu.ufp.inf.sd.rmi.dropbox.server.DropboxServerImpl;
+import edu.ufp.inf.sd.rmi.dropbox.server.State;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -25,6 +26,8 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
     private final DropboxClientImpl dbclientImpl;
     private DropboxServerImpl dbsImpl;
     private DropboxClientFolderGUI folderGUI;
+    private DefaultListModel<String> grouplist = new DefaultListModel<>();
+
     /**
      * Creates new form DropboxClientGroupUI
      */
@@ -35,12 +38,12 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.addWindowListener(this);
         File[] afile = dbclientImpl.getDbserverRI().listDir("DropboxOperations", "");
-            DefaultListModel listModel = new DefaultListModel();
-            int i = 0;
-            for (int j = afile.length; i < j; i++) {
-                listModel.addElement(afile[i].getName());
-            }
-            jListAllGroups.setModel(listModel);
+        DefaultListModel listModel = new DefaultListModel();
+        int i = 0;
+        for (int j = afile.length; i < j; i++) {
+            listModel.addElement(afile[i].getName());
+        }
+        jListAllGroups.setModel(listModel);
     }
 
     /**
@@ -168,12 +171,12 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextFieldGroupNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldGroupNameActionPerformed
-       
+
     }//GEN-LAST:event_jTextFieldGroupNameActionPerformed
 
     private void jButtonCreateGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCreateGroupActionPerformed
         try {
-            dbclientImpl.triggeredAddGroupName(jTextFieldGroupName.getText(), "pedro");
+            dbclientImpl.triggeredAddGroupName(jTextFieldGroupName.getText(), dbclientImpl.getClientUsername());
             File[] afile = dbclientImpl.getDbserverRI().listDir("DropboxOperations", "");
             DefaultListModel listModel = new DefaultListModel();
             int i = 0;
@@ -194,7 +197,7 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
         } catch (RemoteException ex) {
             Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }//GEN-LAST:event_jButtonOpenActionPerformed
 
     private void jButtonLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLogoutActionPerformed
@@ -203,8 +206,8 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
 
     private void jButtonJoinGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJoinGroupActionPerformed
         try {
-        
-            dbclientImpl.triggerJoinGroup( dbclientImpl.getClientUsername(), jListAllGroups.getSelectedValue());
+
+            dbclientImpl.triggerJoinGroup(dbclientImpl.getClientUsername(), jListAllGroups.getSelectedValue());
         } catch (RemoteException ex) {
             Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -253,4 +256,14 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
     @Override
     public void windowDeactivated(WindowEvent arg0) {
     }
+    
+    
+    public void addNewGroup(State.NewGroup nr) {
+        this.grouplist.addElement(nr.getGroupName());
+    }
+
+    public void removeAllGroups() {
+        this.grouplist.removeAllElements();
+    }
+
 }

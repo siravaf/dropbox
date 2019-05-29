@@ -21,10 +21,10 @@ export NETBEANS=NetBeans
 export INTELLIJ=IntelliJ
 #export CURRENT_IDE=${INTELLIJ}
 export CURRENT_IDE=${NETBEANS}
-export USERNAME=antonioferreira
+export USERNAME=pedrocoutinho
 
 #@REM ==== JAVA NAMING STUFF ====
-export JAVAPROJ_NAME=Dropbox
+export JAVAPROJ_NAME=dropbox
 export JAVAPROJ=/Users/${USERNAME}/Projects/${JAVAPROJ_NAME}
 
 export PACKAGE=dropbox

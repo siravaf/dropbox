@@ -5,5 +5,5 @@ import java.rmi.RemoteException;
 
 public interface DropboxClientRI extends Remote {
     public String getClientUsername() throws RemoteException;
-
+    public void update() throws RemoteException ;
 }
