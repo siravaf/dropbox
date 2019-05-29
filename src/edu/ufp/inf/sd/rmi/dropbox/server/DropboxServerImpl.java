@@ -25,6 +25,7 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
 
     protected ArrayList<DropboxClientRI> clients = new ArrayList<>();
     protected ArrayList<String> groupNameArray = new ArrayList<>();
+    private Object state;
 
     public static String PATH_USERS = "/Projects/Dropbox/data/users/";
     public static String PATH_GROUP = "/Projects/Dropbox/data/groups/";
@@ -125,7 +126,6 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
 
     @Override
     public int addGroupName(DropboxClientRI client, String username, String groupName) throws RemoteException {
-        System.out.println("TESTE!asdasdasd");
         String home = System.getProperty("user.home");
 
         String groupName_path = home + PATH_GROUP + groupName + ".txt";
@@ -147,7 +147,7 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
              *
              */
             this.makeDir(groupName, "");
-
+            this.setState(new State().new NewGroup(false, groupName));
         } catch (IOException e) {
             Logger.getLogger(DropboxServerImpl.class.getName()).log(Level.SEVERE, null, e);
             return 0;
@@ -178,29 +178,13 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
         return false;
     }
 
-
-    /*  @Override
-       public int logout(String username) throws RemoteException {
-           return 0;
-       }
-
-       @Override
-       public void attachUserInGroup(DropboxClientRI client, String groupName) throws RemoteException {
-
-       }
-
-       @Override
-       public void detachUserOfGroup(DropboxClientRI client, String groupName) throws RemoteException {
-
-       }
-     */
     @Override
     public void makeDir(String groupName, String dir) throws RemoteException {
         try {
             System.out.println("No make dir " + groupName + " - " + dir);
             String home = System.getProperty("user.home");
-            home = home + PATH + groupName + "/" ;
-           
+            home = home + PATH + groupName + "/";
+
             boolean teste = new File(home, dir).mkdirs();
 
         } catch (Exception ex) {
@@ -246,13 +230,13 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
     @Override
     public File[] listDir(String groupName, String dir) throws RemoteException {
         String home = System.getProperty("user.home");
-       
-     if (groupName.equals( "DropboxOperations")) {
+
+        if (groupName.equals("DropboxOperations")) {
             home = home + PATH;
         } else {
             home = home + PATH + groupName + "/" + dir + "/";
         }
-          
+
         File file = new File(home);
         File afile[] = file.listFiles();
         int i = 0;
@@ -295,4 +279,31 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
         }
     }
 
+    //ver conflito
+    public void notifyAllObservers() throws RemoteException {
+        System.out.println("DropboxServerImpl - notifyAllObservers()");
+        for (DropboxClientRI client : clients) {
+            client.update();
+        }
+    }
+
+    /**
+     * @return the state
+     */
+    @Override
+    public Object getState() {
+        return state;
+    }
+
+    /**
+     * @param state the state to set
+     */
+    @Override
+    public void setState(Object state) throws RemoteException {
+        this.state = state;
+        System.out.println("DropboxServerImpl - setState(): " + state.getClass().getName());
+        if (!clients.isEmpty()) {
+            notifyAllObservers();
+        }
+    }
 }
