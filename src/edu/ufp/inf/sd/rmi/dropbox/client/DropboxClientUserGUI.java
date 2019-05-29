@@ -134,6 +134,7 @@ public class DropboxClientUserGUI extends javax.swing.JFrame implements ActionLi
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         boolean login = checkLoginFields();
         if (login) {
+            System.out.println("O Coutinho é o maior!!!");
             dbcImpl.triggeredLogin(jtfUsername.getText(), String.valueOf(jtfPassword.getPassword()));
         }
 
