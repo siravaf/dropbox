@@ -2,14 +2,21 @@ package edu.ufp.inf.sd.rmi.dropbox.client;
 
 import edu.ufp.inf.sd.rmi.dropbox.server.DropboxServerImpl;
 import edu.ufp.inf.sd.rmi.dropbox.server.DropboxServerRI;
+import edu.ufp.inf.sd.rmi.dropbox.server.State;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 public class DropboxClientImpl implements DropboxClientRI {
+
+    
+    private Object lastState;
+
     private DropboxServerRI dbserverRI;
     private DropboxClientUserGUI dbcImplLoginUI = new DropboxClientUserGUI(this);
 
     private DropboxClientGroupGUI dropboxClientgui;
+    public static String PATH = "/Projects/Dropbox/data/DropboxOperations/";
 
     private String username;
     private String password;
@@ -28,8 +35,7 @@ public class DropboxClientImpl implements DropboxClientRI {
             System.out.println("DropboxClientImpl: " + e.getMessage());
         }
     }
-    
-    
+
     public void triggeredRegister(String username, String password) {
         this.setUsername(username);
         this.setPassword(password);
@@ -47,21 +53,21 @@ public class DropboxClientImpl implements DropboxClientRI {
         }
     }
 
-        public void triggerJoinGroup(String username, String groupName) throws RemoteException {
-            System.out.println("Client -> groupName " + groupName);
-            int joinGroupName = getDbserverRI().joinGroup(this, username, groupName);
-                if(joinGroupName == 0 ){
-                    System.out.println("já está junto");
-                }else{
-                    System.out.println("junto com sucesso");
-                }
+    public void triggerJoinGroup(String username, String groupName) throws RemoteException {
+        System.out.println("Client -> groupName " + groupName);
+        int joinGroupName = getDbserverRI().joinGroup(this, username, groupName);
+        if (joinGroupName == 0) {
+            System.out.println("já está junto");
+        } else {
+            System.out.println("junto com sucesso");
         }
-    
+    }
+
     public void triggeredAddGroupName(String groupName, String username) {
         this.setUsername(username);
         this.setGroupName(groupName);
         try {
-            
+
             int registerGroupName = getDbserverRI().addGroupName(this, username, groupName);
             if (registerGroupName == 0) {
                 System.out.println("ERRO! Já existe esse group name");
@@ -118,7 +124,6 @@ public class DropboxClientImpl implements DropboxClientRI {
         this.groupName = groupName;
     }
 
-
     public boolean isLoggedin() {
         return loggedin;
     }
@@ -140,4 +145,25 @@ public class DropboxClientImpl implements DropboxClientRI {
     public void setDbserverRI(DropboxServerRI dbserverRI) {
         this.dbserverRI = dbserverRI;
     }
+
+    @Override
+    public void update() throws RemoteException {
+        this.lastState = this.dbserverRI.getState();
+        
+
+        if (lastState instanceof State.NewGroup) {
+            System.out.println("MinesweperClientImpl - update(): State = NewRoom ");
+            State.NewGroup nr = (State.NewGroup) lastState;
+            if (nr.isRemoveAll()) {
+               // dropboxClientgui.removeAllGroup();
+            } else {
+                dropboxClientgui.addNewGroup(nr);
+            }
+        }
+        System.out.println("DropboxClientImpl - update():");
+        System.out.println("A atualizar Group Name");
+
+        
+    }
+    
 }
