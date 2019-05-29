@@ -17,7 +17,7 @@ public class DropboxClient {
             System.out.println("DropboxClient - Constructor(): Args null");
             System.exit(0);
         }
-
+        System.out.println("teste para o push");
         try {
             //Check args for receiving hostname
             String registryHostname = "localhost"; //May be an IP or hostname
