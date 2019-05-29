@@ -123,6 +123,40 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
         }
         return 0;
     }
+@Override    
+    public int unjoinGroup( String username, String groupName) throws RemoteException {
+        String home = System.getProperty("user.home");
+        String groupName_path = home + PATH_GROUP + groupName + ".txt";
+        File inputFile = new File(groupName_path); 
+        File tempFile = new File(home+PATH_GROUP+ "temp.txt");
+
+        
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(groupName_path));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+            
+            String line;
+           
+            while((line = reader.readLine()) != null){
+                if(null!=line && !line.equalsIgnoreCase(username)){
+                    writer.write(line + System.getProperty("line.separator"));
+                }
+            }
+            writer.close();
+            reader.close();
+            boolean successful;
+            successful = tempFile.renameTo(inputFile);
+            
+            
+        } catch (IOException ex) {
+            Logger.getLogger(DropboxServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+        
+
+        return 0;
+    }
 
     @Override
     public int addGroupName(DropboxClientRI client, String username, String groupName) throws RemoteException {

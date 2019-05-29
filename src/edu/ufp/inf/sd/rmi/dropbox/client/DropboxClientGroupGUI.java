@@ -64,6 +64,7 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
         jButtonOpen = new javax.swing.JButton();
         jButtonLogout = new javax.swing.JButton();
         jButtonJoinGroup = new javax.swing.JButton();
+        jButtonUnjoinGroup = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -108,6 +109,13 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
             }
         });
 
+        jButtonUnjoinGroup.setText("Unjoin");
+        jButtonUnjoinGroup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUnjoinGroupActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -121,13 +129,17 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
                         .addComponent(jTextFieldGroupName))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButtonJoinGroup, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButtonUnjoinGroup, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButtonCreateGroup, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
+                            .addComponent(jButtonCreateGroup, javax.swing.GroupLayout.PREFERRED_SIZE, 144, Short.MAX_VALUE)
                             .addComponent(jButtonOpen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButtonLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButtonJoinGroup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jButtonLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(295, 295, 295))
         );
         jPanel1Layout.setVerticalGroup(
@@ -138,17 +150,18 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
                     .addComponent(jTextFieldGroupName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButtonJoinGroup)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonCreateGroup)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(15, 15, 15)
                         .addComponent(jButtonOpen)
-                        .addGap(11, 11, 11)
+                        .addGap(18, 18, 18)
                         .addComponent(jButtonLogout))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonJoinGroup)
+                    .addComponent(jButtonUnjoinGroup)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -164,7 +177,7 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         pack();
@@ -213,6 +226,14 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
         }
     }//GEN-LAST:event_jButtonJoinGroupActionPerformed
 
+    private void jButtonUnjoinGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUnjoinGroupActionPerformed
+        try {
+            dbclientImpl.getDbserverRI().unjoinGroup( dbclientImpl.getClientUsername(), jListAllGroups.getSelectedValue());
+        } catch (RemoteException ex) {
+            Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonUnjoinGroupActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -222,6 +243,7 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
     private javax.swing.JButton jButtonJoinGroup;
     private javax.swing.JButton jButtonLogout;
     private javax.swing.JButton jButtonOpen;
+    private javax.swing.JButton jButtonUnjoinGroup;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList<String> jListAllGroups;
     private javax.swing.JPanel jPanel1;
