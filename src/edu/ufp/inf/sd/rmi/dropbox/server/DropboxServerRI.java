@@ -20,7 +20,7 @@ public interface DropboxServerRI extends Remote {
     public int login(DropboxClientRI client, String username, String password)throws RemoteException;
     public int addGroupName(DropboxClientRI client, String username, String groupName)throws RemoteException;
     public int joinGroup(DropboxClientRI client, String username, String groupName) throws RemoteException;
-
+public int unjoinGroup( String username, String groupName) throws RemoteException;   
     /* public int logout(String username) throws RemoteException;
     public void attachUserInGroup(DropboxClientRI client, String groupName) throws RemoteException;
     public void detachUserOfGroup(DropboxClientRI client, String groupName) throws RemoteException;
