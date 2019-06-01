@@ -9,14 +9,13 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class DropboxClientImpl implements DropboxClientRI {
 
-    
     private Object lastState;
 
     private DropboxServerRI dbserverRI;
     private DropboxClientUserGUI dbcImplLoginUI = new DropboxClientUserGUI(this);
 
     private DropboxClientGroupGUI dropboxClientgui;
-    public static String PATH = "/Projects/Dropbox/data/DropboxOperations/";
+    public static String PATH = "/Projects/dropbox/data/DropboxOperations/";
 
     private String username;
     private String password;
@@ -70,13 +69,22 @@ public class DropboxClientImpl implements DropboxClientRI {
 
             int registerGroupName = getDbserverRI().addGroupName(this, username, groupName);
             if (registerGroupName == 0) {
-                System.out.println("ERRO! Já existe esse group name");
+
             }
         } catch (RemoteException e) {
             System.out.println(e.getMessage());
         }
     }
 
+    public void triggeredLogout(String username) {
+        System.out.println("triggeredLogout");
+        try {
+            dbserverRI.logout(username);
+            this.dbcImplLoginUI.setVisible(true);
+        } catch (RemoteException e) {
+        }
+    }
+    
     public void triggeredLogin(String username, String password) {
         this.setUsername(username);
         this.setPassword(password);
@@ -146,24 +154,43 @@ public class DropboxClientImpl implements DropboxClientRI {
         this.dbserverRI = dbserverRI;
     }
 
+    public Object getLastState() {
+        return lastState;
+    }
+
+    public void setLastState(Object lastState) {
+        this.lastState = lastState;
+    }
+
     @Override
     public void update() throws RemoteException {
         this.lastState = this.dbserverRI.getState();
-        
 
         if (lastState instanceof State.NewGroup) {
-            System.out.println("MinesweperClientImpl - update(): State = NewRoom ");
+            System.out.println("ELE ENTROU AQUI BURRO");
+            System.out.println("DropboxClientImpl - update(): State = NewGroup ");
             State.NewGroup nr = (State.NewGroup) lastState;
+            dropboxClientgui.updateAllGroups();
+            
             if (nr.isRemoveAll()) {
-               // dropboxClientgui.removeAllGroup();
+                dropboxClientgui.removeAllGroups();
             } else {
                 dropboxClientgui.addNewGroup(nr);
             }
-        }
-        System.out.println("DropboxClientImpl - update():");
-        System.out.println("A atualizar Group Name");
+        }else if (lastState instanceof State.GenericState) {
+                        System.out.println(" Ja entrei aqui finalmente");
 
-        
+            State.GenericState state = (State.GenericState) lastState;
+            String type = state.getType();
+            System.out.println("DropboxClientImpl - update(): State = GenericState(" + type + ")");
+            switch (type) {
+                case "GroupsUpdate": {
+                    dropboxClientgui.updateAllGroups();
+                    break;
+                }
+            }
+        } 
+
     }
-    
+
 }

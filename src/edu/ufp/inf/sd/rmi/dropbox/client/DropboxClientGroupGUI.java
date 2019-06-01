@@ -214,7 +214,14 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
     }//GEN-LAST:event_jButtonOpenActionPerformed
 
     private void jButtonLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLogoutActionPerformed
-        // TODO add your handling code here:
+        this.setVisible(false);
+        try {
+            dbclientImpl.triggeredLogout(dbclientImpl.getClientUsername());
+        } catch (RemoteException ex) {
+            Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
     }//GEN-LAST:event_jButtonLogoutActionPerformed
 
     private void jButtonJoinGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJoinGroupActionPerformed
@@ -228,7 +235,7 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
 
     private void jButtonUnjoinGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUnjoinGroupActionPerformed
         try {
-            dbclientImpl.getDbserverRI().unjoinGroup( dbclientImpl.getClientUsername(), jListAllGroups.getSelectedValue());
+            dbclientImpl.getDbserverRI().unjoinGroup(dbclientImpl.getClientUsername(), jListAllGroups.getSelectedValue());
         } catch (RemoteException ex) {
             Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -278,14 +285,38 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
     @Override
     public void windowDeactivated(WindowEvent arg0) {
     }
-    
-    
+
     public void addNewGroup(State.NewGroup nr) {
         this.grouplist.addElement(nr.getGroupName());
+        for (int i = 0; i < this.grouplist.size(); i++) {
+            System.out.println(this.grouplist.get(i));
+        }
     }
 
     public void removeAllGroups() {
         this.grouplist.removeAllElements();
     }
 
+    public void updateClients() {
+        State.ConnectedClients sc = (State.ConnectedClients) this.dbclientImpl.getLastState();
+    }
+
+    public void updateAllGroups() {
+        System.out.println("updateAllGroups()");
+        this.removeAllGroups();
+
+        try {
+            String[] groups = this.dbclientImpl.getDbserverRI().fetchAvaliableGroups();
+           
+            if (groups.length != 0) {
+                for (int i = 0; i < groups.length; i++) {
+                    this.grouplist.addElement(groups[i]);
+                }
+                this.jListAllGroups.setModel(this.grouplist);
+            }
+        } catch (RemoteException ex) {
+            Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 }
