@@ -6,16 +6,22 @@
 package edu.ufp.inf.sd.rmi.dropbox.client;
 
 import edu.ufp.inf.sd.rmi.dropbox.server.DropboxServerImpl;
+import static edu.ufp.inf.sd.rmi.dropbox.server.DropboxServerImpl.PATH_GROUP;
 import edu.ufp.inf.sd.rmi.dropbox.server.State;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -204,10 +210,34 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
 
     private void jButtonOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenActionPerformed
         jListAllGroups.getSelectedValue();
-        this.setVisible(false);
+
+        String home = System.getProperty("user.home");
+        String groupName_path = home + PATH_GROUP + jListAllGroups.getSelectedValue() + ".txt";
+        File inputFile = new File(groupName_path);
         try {
-            folderGUI = new DropboxClientFolderGUI(dbclientImpl, jListAllGroups.getSelectedValue(), this);
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+
+                if (line.equals(dbclientImpl.getClientUsername())) {
+                    this.setVisible(false);
+
+                    try {
+                        folderGUI = new DropboxClientFolderGUI(dbclientImpl, jListAllGroups.getSelectedValue(), this);
+                        break;
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Não tem permissão para entrar nesse grupo filho da puta");
+                }
+
+            }
+
         } catch (RemoteException ex) {
+            Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
