@@ -84,7 +84,7 @@ public class DropboxClientImpl implements DropboxClientRI {
         } catch (RemoteException e) {
         }
     }
-    
+
     public void triggeredLogin(String username, String password) {
         this.setUsername(username);
         this.setPassword(password);
@@ -165,31 +165,35 @@ public class DropboxClientImpl implements DropboxClientRI {
     @Override
     public void update() throws RemoteException {
         this.lastState = this.dbserverRI.getState();
+        
+        System.out.println("------- this.lastState ----- " + this.lastState.toString());
 
         if (lastState instanceof State.NewGroup) {
-            System.out.println("ELE ENTROU AQUI BURRO");
+
             System.out.println("DropboxClientImpl - update(): State = NewGroup ");
             State.NewGroup nr = (State.NewGroup) lastState;
+            dropboxClientgui.addNewGroup(nr);
             dropboxClientgui.updateAllGroups();
-            
-            if (nr.isRemoveAll()) {
-                dropboxClientgui.removeAllGroups();
-            } else {
-                dropboxClientgui.addNewGroup(nr);
-            }
-        }else if (lastState instanceof State.GenericState) {
-                        System.out.println(" Ja entrei aqui finalmente");
 
-            State.GenericState state = (State.GenericState) lastState;
-            String type = state.getType();
-            System.out.println("DropboxClientImpl - update(): State = GenericState(" + type + ")");
-            switch (type) {
-                case "GroupsUpdate": {
-                    dropboxClientgui.updateAllGroups();
-                    break;
-                }
-            }
+            /* if (nr.isRemoveAll()) {
+                dropboxClientgui.removeAllGroups();
+            } else {*/
+            //}
         } 
+        if (lastState instanceof State.NewDir) {
+
+            System.out.println("DropboxClientImpl - update(): State = NewDIR ");
+            State.NewDir nr = (State.NewDir) lastState;
+            
+            System.out.println("------ate aqui esta tudo a partir daqui é o que se ve");
+            dropboxClientgui.getFolderGUI().addNewDir(nr);
+            dropboxClientgui.getFolderGUI().updateAllDirs();
+System.out.println("------tas fodido comigo");
+            /* if (nr.isRemoveAll()) {
+                dropboxClientgui.removeAllGroups();
+            } else {*/
+            }
+        
 
     }
 

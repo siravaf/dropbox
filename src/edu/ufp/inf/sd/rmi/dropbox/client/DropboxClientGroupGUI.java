@@ -34,6 +34,14 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
     private DropboxClientFolderGUI folderGUI;
     private DefaultListModel<String> grouplist = new DefaultListModel<>();
 
+    public DropboxClientFolderGUI getFolderGUI() {
+        return folderGUI;
+    }
+
+    public void setFolderGUI(DropboxClientFolderGUI folderGUI) {
+        this.folderGUI = folderGUI;
+    }
+
     /**
      * Creates new form DropboxClientGroupUI
      */
@@ -217,24 +225,25 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
         try {
             BufferedReader reader = new BufferedReader(new FileReader(inputFile));
             String line;
-
+            boolean exists = false;
             while ((line = reader.readLine()) != null) {
-
                 if (line.equals(dbclientImpl.getClientUsername())) {
-                    this.setVisible(false);
-
-                    try {
-                        folderGUI = new DropboxClientFolderGUI(dbclientImpl, jListAllGroups.getSelectedValue(), this);
-                        break;
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    exists = true;
+                    break;
                 } else {
-                    JOptionPane.showMessageDialog(null, "Não tem permissão para entrar nesse grupo filho da puta");
+                    exists = false;
                 }
-
             }
-
+            if (exists == true) {
+                this.setVisible(false);
+                try {
+                    folderGUI = new DropboxClientFolderGUI(dbclientImpl, jListAllGroups.getSelectedValue(), this);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Não tem permissão para entrar nesse grupo!");
+            }
         } catch (RemoteException ex) {
             Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -250,8 +259,8 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
         } catch (RemoteException ex) {
             Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
+
+
     }//GEN-LAST:event_jButtonLogoutActionPerformed
 
     private void jButtonJoinGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJoinGroupActionPerformed
@@ -318,9 +327,7 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
 
     public void addNewGroup(State.NewGroup nr) {
         this.grouplist.addElement(nr.getGroupName());
-        for (int i = 0; i < this.grouplist.size(); i++) {
-            System.out.println(this.grouplist.get(i));
-        }
+
     }
 
     public void removeAllGroups() {
@@ -337,8 +344,9 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
 
         try {
             String[] groups = this.dbclientImpl.getDbserverRI().fetchAvaliableGroups();
-           
+
             if (groups.length != 0) {
+
                 for (int i = 0; i < groups.length; i++) {
                     this.grouplist.addElement(groups[i]);
                 }
@@ -347,6 +355,7 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
         } catch (RemoteException ex) {
             Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
+    
+     
 }

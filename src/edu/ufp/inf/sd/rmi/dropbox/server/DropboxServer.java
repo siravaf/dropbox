@@ -58,18 +58,6 @@ public class DropboxServer {
             if (registry != null) {
                 //============ Create Servant ============
                 DropboxRI= new DropboxServerImpl();
-              /*  DropboxRI.makeDir("PEDRO", "file1");
-                DropboxRI.makeDir("PEDRO", "file2");
-                DropboxRI.makeDir("PEDRO", "file3");
-                DropboxRI.makeDir("PEDRO/file3", "file7");
-                DropboxRI.makeDir("ANTONIO", "file4");
-                DropboxRI.makeDir("ANTONIO", "file5");
-                DropboxRI.makeDir("ANTONIO", "file6");*/
-                // DropboxRI.removeDir("PEDRO/file3", "file7");
-                // DropboxRI.removeDir("PEDRO", "file3");
-                // DropboxRI.renameDir("PEDRO", "file1", "new");
-                //DropboxRI.moveDir("PEDRO", "file2","ANTONIO", "file4");
-
 
                 //Get service url (including servicename)
                 String serviceUrl = contextRMI.getServicesUrl(0);

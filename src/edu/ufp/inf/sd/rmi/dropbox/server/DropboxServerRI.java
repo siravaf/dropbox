@@ -35,8 +35,9 @@ public interface DropboxServerRI extends Remote {
     public int unjoinGroup(String username, String groupName) throws RemoteException;
 
     public String[] fetchAvaliableGroups() throws RemoteException;
-    
-    
-    public int logout(String username) throws RemoteException; 
+
+    public String[] fetchAvaliableDir() throws RemoteException;
+
+    public int logout(String username) throws RemoteException;
 
 }

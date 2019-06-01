@@ -25,6 +25,8 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
 
     protected ArrayList<DropboxClientRI> clients = new ArrayList<>();
     protected ArrayList<String> groupNameArray = new ArrayList<>();
+    protected ArrayList<String> dirArray = new ArrayList<>();
+
     private Object state;
 
     public static String PATH_USERS = "/Projects/dropbox/data/users/";
@@ -33,6 +35,16 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
 
     protected DropboxServerImpl() throws RemoteException {
         super();
+        String home = System.getProperty("user.home");
+        home = home + PATH;
+        File file = new File(home);
+
+        File afile[] = file.listFiles();
+        int i = 0;
+        for (int j = afile.length; i < j; i++) {
+            File arquivos = afile[i];
+            groupNameArray.add(arquivos.getName());
+        }
     }
 
     @Override
@@ -64,7 +76,7 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
     }
 
     @Override
-    public int logout(String username) throws RemoteException{
+    public int logout(String username) throws RemoteException {
         for (DropboxClientRI user : this.clients) {
             if (user.getClientUsername().compareTo(username) == 0) {
                 clients.remove(user);
@@ -73,16 +85,13 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
         }
         return 0;
     }
-/**
-  System.out.println("MinesweperServerImpl - logout(): " + username);
-        for (MinesweperClientRI user : this.clients) {
-            if (user.getClientUsername().compareTo(username) == 0) {
-                clients.remove(user);
-                return 1;
-            }
-        }
-        return 0;
- */
+
+    /**
+     * System.out.println("MinesweperServerImpl - logout(): " + username); for
+     * (MinesweperClientRI user : this.clients) { if
+     * (user.getClientUsername().compareTo(username) == 0) {
+     * clients.remove(user); return 1; } } return 0;
+     */
     @Override
 
     public int login(DropboxClientRI client, String username, String password) throws RemoteException {
@@ -102,6 +111,7 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
             if (file_password.compareTo(password) == 0) {
                 System.out.println("DropboxServerImpl - login(): " + username + " is now logged in.");
                 clients.add(client);
+
                 return 1;
             } else {
                 System.out.println("DropboxServerImpl - login(): " + username + " has failed the password.");
@@ -131,13 +141,32 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
         BufferedWriter bw = null;
 
         if (file.exists()) {
-            System.out.println("Existe ficheiro por isso vou append");
             try {
-                Writer output;
-                output = new BufferedWriter(new FileWriter(file, true));  //clears file every time
-                output.append("\n");
-                output.append(username);
-                output.close();
+
+                boolean exist = false;
+                BufferedReader reader;
+                reader = new BufferedReader(new FileReader(groupName_path));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (null != line && line.equals(username)) {
+                        exist = true;
+                        break;
+                    } else {
+                        exist = false;
+                    }
+                }
+                if (exist == false) {
+                    Writer output;
+                    output = new BufferedWriter(new FileWriter(file, true));  //clears file every time
+                    output.append("\n");
+                    output.append(username);
+                    output.close();
+                }
+                reader.close();
+
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(DropboxServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
                 Logger.getLogger(DropboxServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -196,8 +225,8 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
              * e o ficheiro de acesso
              *
              */
-            this.makeDir(groupName, "");
             groupNameArray.add(groupName);
+            this.makeDir(groupName, "");
 
             this.setState(new State().new NewGroup(false, groupName));
 
@@ -234,11 +263,15 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
     @Override
     public void makeDir(String groupName, String dir) throws RemoteException {
         try {
-            System.out.println("No make dir " + groupName + " - " + dir);
+
             String home = System.getProperty("user.home");
             home = home + PATH + groupName + "/";
 
             boolean teste = new File(home, dir).mkdirs();
+            if (dir != null) {
+                this.dirArray.add(dir);
+                this.setState(new State().new NewDir(false, dir));
+            }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Erro ao criar o diretorio");
             System.out.println(ex);
@@ -353,24 +386,40 @@ public class DropboxServerImpl extends UnicastRemoteObject implements DropboxSer
     @Override
     public void setState(Object state) throws RemoteException {
         this.state = state;
+        
         System.out.println("DropboxServerImpl - setState(): " + state.getClass().getName());
 
         for (DropboxClientRI client : clients) {
             System.out.println(client.getClientUsername());
-        }
 
-        if (!clients.isEmpty()) {
-            notifyAllObservers();
+            if (!clients.isEmpty()) {
+                notifyAllObservers();
+            }
         }
     }
 
     @Override
     public String[] fetchAvaliableGroups() throws RemoteException {
-        System.out.println("DropboxServerImpl:::::::::::::::fetchAvaliableGroups" + groupNameArray);
+
         String[] itemsArr = new String[groupNameArray.size()];
         if (!groupNameArray.isEmpty()) {
+
             for (int i = 0; i < groupNameArray.size(); i++) {
                 itemsArr[i] = groupNameArray.get(i);
+            }
+        }
+
+        return itemsArr;
+    }
+
+    @Override
+    public String[] fetchAvaliableDir() throws RemoteException {
+
+        String[] itemsArr = new String[dirArray.size()];
+        if (!dirArray.isEmpty()) {
+
+            for (int i = 0; i < dirArray.size(); i++) {
+                itemsArr[i] = dirArray.get(i);
             }
         }
 
