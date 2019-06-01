@@ -217,7 +217,6 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
     }//GEN-LAST:event_jButtonCreateGroupActionPerformed
 
     private void jButtonOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenActionPerformed
-        jListAllGroups.getSelectedValue();
 
         try {
             int exist = dbclientImpl.triggeredOpenGroup(jListAllGroups.getSelectedValue(), dbclientImpl.getClientUsername());

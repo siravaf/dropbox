@@ -24,7 +24,7 @@ public class DropboxClientFolderGUI extends javax.swing.JFrame implements Window
 
     private final DropboxClientImpl dbclientImpl;
     private final DropboxClientGroupGUI dbgui;
-        private DefaultListModel<String> dirList = new DefaultListModel<>();
+    private DefaultListModel<String> dirList = new DefaultListModel<>();
     String groupName;
 
     /**
@@ -45,19 +45,16 @@ public class DropboxClientFolderGUI extends javax.swing.JFrame implements Window
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.addWindowListener(this);
         File[] afile = dbclientImpl.getDbserverRI().listDir(groupName, "");
-        
-       
-        
-      //  JOptionPane.showConfirmDialog(this.dbgui, afile);
+
+        //  JOptionPane.showConfirmDialog(this.dbgui, afile);
         DefaultListModel listModel = new DefaultListModel();
         int i = 0;
         for (int j = afile.length; i < j; i++) {
             listModel.addElement(afile[i].getName());
         }
-        
+
         jListGroupFolders.setModel(listModel);
-        
-        
+
     }
 
     /**
@@ -260,7 +257,7 @@ public class DropboxClientFolderGUI extends javax.swing.JFrame implements Window
     private void jButtonRenameFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRenameFolderActionPerformed
         try {
             dbclientImpl.getDbserverRI().renameDir(groupName, jListGroupFolders.getSelectedValue(), jTextNewFolder.getText());
-            
+
             File[] afile;
             DefaultListModel listModel = new DefaultListModel();
             int i = 0;
@@ -276,7 +273,7 @@ public class DropboxClientFolderGUI extends javax.swing.JFrame implements Window
     }//GEN-LAST:event_jButtonRenameFolderActionPerformed
 
     private void jButtonMoveFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMoveFolderActionPerformed
-        
+
     }//GEN-LAST:event_jButtonMoveFolderActionPerformed
 
     private void jButtonDeleteFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteFolderActionPerformed
@@ -290,20 +287,44 @@ public class DropboxClientFolderGUI extends javax.swing.JFrame implements Window
                 listModel.addElement(afile[i].getName());
             }
             jListGroupFolders.setModel(listModel);
-            
+
         } catch (RemoteException ex) {
             Logger.getLogger(DropboxClientFolderGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-             
+
     }//GEN-LAST:event_jButtonDeleteFolderActionPerformed
 
     private void jButtonOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenActionPerformed
-         try {
-        File[] afile;
+        try {
+            File[] afile;
             DefaultListModel listModel = new DefaultListModel();
             int i = 0;
-       
+
             afile = dbclientImpl.getDbserverRI().listDir(groupName, jListGroupFolders.getSelectedValue());
+            groupName = groupName + "/" + jListGroupFolders.getSelectedValue();
+            for (int j = afile.length; i < j; i++) {
+                listModel.addElement(afile[i].getName());
+            }
+            jListGroupFolders.setModel(listModel);
+
+        } catch (RemoteException ex) {
+            Logger.getLogger(DropboxClientFolderGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jButtonOpenActionPerformed
+
+    private void jButtonExitFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExitFolderActionPerformed
+
+        String[] array = groupName.split("/");
+
+        groupName = array[0];
+
+        File[] afile;
+        DefaultListModel listModel = new DefaultListModel();
+        int i = 0;
+
+        try {
+            afile = dbclientImpl.getDbserverRI().listDir(groupName, "");
             for (int j = afile.length; i < j; i++) {
                 listModel.addElement(afile[i].getName());
             }
@@ -311,11 +332,7 @@ public class DropboxClientFolderGUI extends javax.swing.JFrame implements Window
         } catch (RemoteException ex) {
             Logger.getLogger(DropboxClientFolderGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-            
-    }//GEN-LAST:event_jButtonOpenActionPerformed
 
-    private void jButtonExitFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExitFolderActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_jButtonExitFolderActionPerformed
 
 
@@ -362,8 +379,8 @@ public class DropboxClientFolderGUI extends javax.swing.JFrame implements Window
     @Override
     public void windowDeactivated(WindowEvent e) {
     }
-    
-     public void addNewDir(State.NewDir nr) {
+
+    public void addNewDir(State.NewDir nr) {
         this.dirList.addElement(nr.getDirName());
 
     }
@@ -372,9 +389,7 @@ public class DropboxClientFolderGUI extends javax.swing.JFrame implements Window
         this.dirList.removeAllElements();
     }
 
-   
-
-   public void updateAllDirs() {
+    public void updateAllDirs() {
         System.out.println("updateAllDirs()");
         this.removeAllDir();
         try {
@@ -390,5 +405,5 @@ public class DropboxClientFolderGUI extends javax.swing.JFrame implements Window
             Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-   
+
 }

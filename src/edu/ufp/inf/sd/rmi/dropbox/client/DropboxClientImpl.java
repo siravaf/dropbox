@@ -172,8 +172,6 @@ public class DropboxClientImpl implements DropboxClientRI {
     public void update() throws RemoteException {
         this.lastState = this.dbserverRI.getState();
 
-        System.out.println("------- this.lastState ----- " + this.lastState.toString());
-
         if (lastState instanceof State.NewGroup) {
 
             System.out.println("DropboxClientImpl - update(): State = NewGroup ");
@@ -185,14 +183,13 @@ public class DropboxClientImpl implements DropboxClientRI {
                 dropboxClientgui.removeAllGroups();
             } else {*/
             //}
-        }
-        if (lastState instanceof State.NewDir) {
+        } else if (lastState instanceof State.NewDir) {
 
             System.out.println("DropboxClientImpl - update(): State = NewDIR ");
             State.NewDir nr = (State.NewDir) lastState;
-
+            System.out.println("Entou qui");
             if (nr.isRemoveAll()) {
-                System.out.println("-----is ermoval ");
+                System.out.println("remove qui");
                 dropboxClientgui.getFolderGUI().removeAllDir();
                 dropboxClientgui.getFolderGUI().updateAllDirs();
             } else {
