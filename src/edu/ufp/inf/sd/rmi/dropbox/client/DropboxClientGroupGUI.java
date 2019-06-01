@@ -219,22 +219,9 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
     private void jButtonOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenActionPerformed
         jListAllGroups.getSelectedValue();
 
-        String home = System.getProperty("user.home");
-        String groupName_path = home + PATH_GROUP + jListAllGroups.getSelectedValue() + ".txt";
-        File inputFile = new File(groupName_path);
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-            String line;
-            boolean exists = false;
-            while ((line = reader.readLine()) != null) {
-                if (line.equals(dbclientImpl.getClientUsername())) {
-                    exists = true;
-                    break;
-                } else {
-                    exists = false;
-                }
-            }
-            if (exists == true) {
+            int exist = dbclientImpl.triggeredOpenGroup(jListAllGroups.getSelectedValue(), dbclientImpl.getClientUsername());
+            if (exist == 0) {
                 this.setVisible(false);
                 try {
                     folderGUI = new DropboxClientFolderGUI(dbclientImpl, jListAllGroups.getSelectedValue(), this);
@@ -243,7 +230,9 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Não tem permissão para entrar nesse grupo!");
+
             }
+
         } catch (RemoteException ex) {
             Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -346,7 +335,6 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
             String[] groups = this.dbclientImpl.getDbserverRI().fetchAvaliableGroups();
 
             if (groups.length != 0) {
-
                 for (int i = 0; i < groups.length; i++) {
                     this.grouplist.addElement(groups[i]);
                 }
@@ -356,6 +344,5 @@ public class DropboxClientGroupGUI extends javax.swing.JFrame implements WindowL
             Logger.getLogger(DropboxClientGroupGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-     
+
 }

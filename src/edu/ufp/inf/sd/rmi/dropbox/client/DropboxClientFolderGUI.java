@@ -290,6 +290,7 @@ public class DropboxClientFolderGUI extends javax.swing.JFrame implements Window
                 listModel.addElement(afile[i].getName());
             }
             jListGroupFolders.setModel(listModel);
+            
         } catch (RemoteException ex) {
             Logger.getLogger(DropboxClientFolderGUI.class.getName()).log(Level.SEVERE, null, ex);
         }

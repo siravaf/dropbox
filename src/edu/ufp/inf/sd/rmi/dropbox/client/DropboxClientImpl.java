@@ -76,6 +76,12 @@ public class DropboxClientImpl implements DropboxClientRI {
         }
     }
 
+    public int triggeredOpenGroup(String dir, String username) throws RemoteException {
+        this.setUsername(username);
+        int openGroup = getDbserverRI().openGroup(this, dir, username);
+        return openGroup;
+    }
+
     public void triggeredLogout(String username) {
         System.out.println("triggeredLogout");
         try {
@@ -165,7 +171,7 @@ public class DropboxClientImpl implements DropboxClientRI {
     @Override
     public void update() throws RemoteException {
         this.lastState = this.dbserverRI.getState();
-        
+
         System.out.println("------- this.lastState ----- " + this.lastState.toString());
 
         if (lastState instanceof State.NewGroup) {
@@ -179,21 +185,22 @@ public class DropboxClientImpl implements DropboxClientRI {
                 dropboxClientgui.removeAllGroups();
             } else {*/
             //}
-        } 
+        }
         if (lastState instanceof State.NewDir) {
 
             System.out.println("DropboxClientImpl - update(): State = NewDIR ");
             State.NewDir nr = (State.NewDir) lastState;
-            
-            System.out.println("------ate aqui esta tudo a partir daqui é o que se ve");
-            dropboxClientgui.getFolderGUI().addNewDir(nr);
-            dropboxClientgui.getFolderGUI().updateAllDirs();
-System.out.println("------tas fodido comigo");
-            /* if (nr.isRemoveAll()) {
-                dropboxClientgui.removeAllGroups();
-            } else {*/
+
+            if (nr.isRemoveAll()) {
+                System.out.println("-----is ermoval ");
+                dropboxClientgui.getFolderGUI().removeAllDir();
+                dropboxClientgui.getFolderGUI().updateAllDirs();
+            } else {
+                dropboxClientgui.getFolderGUI().addNewDir(nr);
+                dropboxClientgui.getFolderGUI().updateAllDirs();
+
             }
-        
+        }
 
     }
 
